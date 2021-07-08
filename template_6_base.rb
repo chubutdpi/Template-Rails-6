@@ -54,7 +54,7 @@ file 'lib/templates/erb/scaffold/_form.html.erb.tt', <<-CODE
       <ul>
       <%% <%=singular_table_name%>.errors.full_messages.each do |message| %>
         <li><%%= message %></li>
-      <%% end %>
+      <%% end %>  
       </ul>
     </div>
   <%% end %>
@@ -5260,9 +5260,6 @@ global.toastr = require('toastr')
 // DATATABLE
 require('datatables.net-bs5')
 
-// DATEPICKER
-global.datepicker = require('bootstrap-datepicker')
-
 // SELECT2
 import 'select2'
 import 'select2/dist/css/select2.css'
@@ -5278,7 +5275,12 @@ import 'bootstrap/js/src/dropdown'
 import 'bootstrap/js/src/scrollspy'  
 // import 'bootstrap/js/src/tab'  
 // import 'bootstrap/js/src/toast'  
-// import 'bootstrap/js/src/tooltip'"
+// import 'bootstrap/js/src/tooltip'
+
+//FLATPICKR
+require('flatpickr')
+import flatpickr from 'flatpickr';
+import { Spanish } from 'flatpickr/dist/l10n/es.js'"
 end
 
 inject_into_file 'app/javascript/packs/application.js', :after => "ActiveStorage.start()" do
@@ -5292,21 +5294,14 @@ $.fn.extend({
       allowClear: false
     });
   },
-  integrateDatepicker: function(selector) {
-    selector = selector || '.datepicker';
-    return $(this).find(selector).datepicker({
-      startView: 2,
-      language: 'es',
-      orientation: 'bottom auto',
-      autoclose: true,
-      clearBtn: true,
-      dateFormat: 'dd-mm-yyyy',
-      endDate: '-4y',
-      defaultViewDate: {
-        year: 1985,
-        month: 1,
-        day: 1
-      }
+  integrateFlatpickr: function(selector) {
+    selector = selector || '.flatpickr';
+    return $(this).find(selector).flatpickr({
+      enableTime: true,
+      dateFormat: 'Y-m-d H:i',
+      altInput: true,
+      altFormat: 'j F, Y - H:i',
+      'locale': Spanish
     });
   }
 });
@@ -5330,7 +5325,7 @@ $(document).on('turbolinks:load', function() {
 
   form = $('form');
   form.integrateSelect2();
-  form.integrateDatepicker();
+  form.integrateFlatpickr();
 
 });
 
@@ -5364,13 +5359,14 @@ toastr.options = {
 end
 
 #----------------------------------------------------------
-remove_file 'app/assets/stylesheets/application.css'
+#remove_file 'app/assets/stylesheets/application.css'
 file 'app/javascript/packs/application.scss', <<-CODE 
 
 $blue: #4e719c !default;
 
 @import "~bootstrap/scss/bootstrap";
 @import "toastr";
+@import "flatpickr/dist/flatpickr.css";
 
 html {
   height:100%;
@@ -5411,6 +5407,12 @@ body {
 .select2-container .select2-selection--single {
   height: 39px !important;
 }
+
+.flatpickr[readonly] {
+  background-color: white;
+  opacity: 1; 
+  cursor: pointer;  
+}
 CODE
 
 
@@ -5435,7 +5437,8 @@ after_bundle do
 
   environment.plugins.append('Provide', new webpack.ProvidePlugin({
     $: 'jquery',
-    jQuery: 'jquery'
+    jQuery: 'jquery',
+    Popper: 'popper.js/dist/popper'
   }))"
   end
 
@@ -5459,6 +5462,7 @@ after_bundle do
   run "yarn add datatables.net-responsive-bs5"
   run "yarn add select2"
   run "yarn add bootstrap-datepicker"
+  run "yarn add flatpickr"
 
 
   #----------------------------------------------------------
@@ -5470,6 +5474,23 @@ after_bundle do
   generate("devise User")
   generate("cancan:ability")
   generate("rolify Role User")
+
+  # Configurar ability de CanCan
+  remove_file 'app/models/ability.rb'
+  file 'app/models/ability.rb', <<-CODE 
+  class Ability
+    include CanCan::Ability
+
+    def initialize(user)
+      user ||= User.new # guest user (not logged in)
+      if user.admin?
+        can :manage, :all
+      else
+        can :read, :all
+      end
+    end
+  end
+  CODE
 
   # Instalar gema de administración
   generate("rails_admin:install")
