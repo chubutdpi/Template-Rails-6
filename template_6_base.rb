@@ -63,6 +63,8 @@ file 'lib/templates/erb/scaffold/_form.html.erb.tt', <<-CODE
       <strong><%%= form.label :<%= attribute.name%>, <%=singular_table_name.camelize%>.human_attribute_name("<%= attribute.name %>").titleize, class:"form-label"%></strong>
       <%- if attribute.reference? -%>
       <%%= form.collection_select :<%= attribute.column_name %>, <%= attribute.name.camelize %>.all, :id, :name, {prompt: "Seleccionar"}, {class: "select2 form-control"}  %>
+      <%- elsif attribute.field_type == :date_select -%>
+      <%%= form.text_field :<%= attribute.name %>, class:"form-control flatpickr" %>
       <%- else -%>
       <%%= form.<%= attribute.field_type %> :<%= attribute.name %>, class:"form-control" %>
       <%- end -%>
@@ -5454,6 +5456,7 @@ after_bundle do
   #----------------------------------------------------------
   
   run "yarn add jquery@3.6.0"
+  run "yarn add moment"
   run "yarn add @popperjs/core@2.9.2"
   run "yarn add bootstrap@5.0.0-beta3"
   run "yarn add toastr"
@@ -5463,6 +5466,8 @@ after_bundle do
   run "yarn add select2"
   run "yarn add bootstrap-datepicker"
   run "yarn add flatpickr"
+
+  
 
 
   #----------------------------------------------------------
@@ -5575,14 +5580,13 @@ after_bundle do
   #---------------------- BASE DE DATOS ---------------------
   #----------------------------------------------------------
 
-
-    
   # Crea clases iniciales
   generate("scaffold Country code:string name:string")
   generate("scaffold Nationality code:string name:string country:references")  
   generate("scaffold Province iso_id:string name:string national_id:integer  country:references complete_name:string iso_name:string lat:decimal{8,2} lon:decimal{8,2}")
   generate("scaffold Department complete_name:string name:string national_id:integer province:references category:string lat:decimal{8,2} lon:decimal{8,2}")
   generate("scaffold Locality name:string national_id:integer department:references category:string lat:decimal{8,2} lon:decimal{8,2}")
+  generate("scaffold events title:string start:datetime end:datetime url:string classNames:string backgroundColor:string borderColor:string textColor:string")
 
   # Correr las Migraciones
   rails_command "db:migrate"
