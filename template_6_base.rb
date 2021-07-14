@@ -44,7 +44,6 @@ module <%= class_path.map(&:camelize).join('::') %>
 end
 CODE
 
-
 file 'lib/templates/erb/scaffold/_form.html.erb.tt', <<-CODE 
 <%%= form_with(model: <%=singular_table_name%>, local: true) do |form| %>
   <%% if <%=singular_table_name%>.errors.any? %>
@@ -63,6 +62,8 @@ file 'lib/templates/erb/scaffold/_form.html.erb.tt', <<-CODE
       <strong><%%= form.label :<%= attribute.name%>, <%=singular_table_name.camelize%>.human_attribute_name("<%= attribute.name %>").titleize, class:"form-label"%></strong>
       <%- if attribute.reference? -%>
       <%%= form.collection_select :<%= attribute.column_name %>, <%= attribute.name.camelize %>.all, :id, :name, {prompt: "Seleccionar"}, {class: "select2 form-control"}  %>
+      <%- elsif attribute.field_type == :datetime_select -%>
+      <%%= form.text_field :<%= attribute.name %>, class:"form-control flatpickr" %>
       <%- else -%>
       <%%= form.<%= attribute.field_type %> :<%= attribute.name %>, class:"form-control" %>
       <%- end -%>
@@ -5476,7 +5477,7 @@ after_bundle do
   #----------------------------------------------------------
   
   run "yarn add jquery@3.6.0"
-  run "yarn add modern"
+  run "yarn add moment"
   run "yarn add @popperjs/core@2.9.2"
   run "yarn add bootstrap@5.0.0-beta3"
   run "yarn add toastr"
@@ -5622,11 +5623,11 @@ after_bundle do
       locale: 'es',
       themeSystem: 'bootstrap',
       hiddenDays: [ 0, 6] ,
-      timeZone:"UTC",
+      timeZone:'UTC',
       headerToolbar:{
-        left:"prev,next,today",
-        center:"title",
-        right:"dayGridMonth,timeGridWeek,timeGridDay,listWeek"
+        left:'prev,next,today',
+        center:'title',
+        right:'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
       },
       events: [
         <% @events.each do |event| %>
@@ -5634,10 +5635,10 @@ after_bundle do
           allDay:false,
           title: '<%=event.title%>', // a property!
           <% if event.end.nil? %>
-          start: '<%=event.start.strftime("%Y-%m-%dT%H:%M:%S")%>'
+          start: '<%=event.start.strftime('%Y-%m-%dT%H:%M:%S')%>'
           <% else %>  
-          start: '<%=event.start.strftime("%Y-%m-%dT%H:%M:%S")%>', // a property!
-          end: '<%=event.end.strftime("%Y-%m-%dT%H:%M:%S")%>'
+          start: '<%=event.start.strftime('%Y-%m-%dT%H:%M:%S')%>', // a property!
+          end: '<%=event.end.strftime('%Y-%m-%dT%H:%M:%S')%>'
           <% end %>
         <% if event == @events.last %>
         }
