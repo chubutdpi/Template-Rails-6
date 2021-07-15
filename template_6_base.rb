@@ -5615,6 +5615,15 @@ after_bundle do
   # Agregar en la Vista de Events el javascript para renderizar el calendario.
   inject_into_file 'app/views/events/index.html.erb', :after => "<!-- End Scaffold -->" do
   "\n
+  <div class="card mx-auto my-2">
+    <div class="card-header">
+      <i class="fa fa-table"></i>
+      Calendario
+    </div>
+    <div class="card-body">
+      <div id='calendar'></div>
+    </div>
+  </div>
   <script>
   document.addEventListener('turbolinks:load', function() {
     var calendarEl = document.getElementById('calendar');
