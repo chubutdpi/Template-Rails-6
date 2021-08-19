@@ -4594,13 +4594,17 @@ es:
         one: dirección
         other: direcciones
       
-      dependence:
-        one: dependencia
-        other: dependencias
-      
       country:
         one: país
         other: países
+      
+      dependence:
+        one: dependencia
+        other: dependencias
+
+      event:
+        one: evento
+        other: eventos
       
       locality:
         one: localidad
@@ -4647,6 +4651,16 @@ es:
         name: "nombre"
         complexity: "complejidad"
         abbreviation: "abreviación"
+
+      event:
+        title: "título"
+        start: "Inicio"
+        end: "fin"
+        url: "url"
+        classNames: "clases CSS"
+        backgroundColor: "color de fondo"
+        borderColor: "color de borde"
+        textColor: "color de texto"
       
       law:
         code: "código"
@@ -5438,6 +5452,11 @@ body {
 .actions {
   margin: 1rem 0;
 }
+
+.fc-event{
+  cursor: pointer;
+}
+
 CODE
 
 #----------------------------------------------------------
@@ -5615,12 +5634,12 @@ after_bundle do
   # Agregar en la Vista de Events el javascript para renderizar el calendario.
   inject_into_file 'app/views/events/index.html.erb', :after => "<!-- End Scaffold -->" do
   "\n
-  <div class="card mx-auto my-2">
-    <div class="card-header">
-      <i class="fa fa-table"></i>
+  <div class='card mx-auto my-2'>
+    <div class='card-header'>
+      <i class='fa fa-table'></i>
       Calendario
     </div>
-    <div class="card-body">
+    <div class='card-body'>
       <div id='calendar'></div>
     </div>
   </div>
@@ -5629,7 +5648,7 @@ after_bundle do
     var calendarEl = document.getElementById('calendar');
     var calendar = new Calendar(calendarEl, {
       plugins: [ momentPlugin, timeGridPlugin, dayGridPlugin, listPlugin ],
-      locale: 'es',
+      locale: esLocale,
       themeSystem: 'bootstrap',
       hiddenDays: [ 0, 6] ,
       timeZone:'UTC',
@@ -5642,7 +5661,8 @@ after_bundle do
         <% @events.each do |event| %>
         {
           allDay:false,
-          title: '<%=event.title%>', // a property!
+          title: '<%=event.title%>',
+          url : '/events/<%=event.id%>',
           <% if event.end.nil? %>
           start: '<%=event.start.strftime('%Y-%m-%dT%H:%M:%S')%>'
           <% else %>  
