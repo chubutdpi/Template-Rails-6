@@ -5488,6 +5488,7 @@ after_bundle do
   #---------- Reemplazar el directorio del asset ------------
   #----------------------------------------------------------
   run "mv app/javascript app/frontend"
+  # Reemplazo con sed la palabra javascript por frontend
   run "sed -i 's/javascript/frontend/g' config/webpacker.yml"
 
   
