@@ -5391,7 +5391,7 @@ end
 
 #----------------------------------------------------------
 #remove_file 'app/assets/stylesheets/application.css'
-file 'app/javascript/packs/application.scss', <<-CODE 
+file 'app/assets/stylesheets/style.scss', <<-CODE 
 
 $blue: #4e719c !default;
 
