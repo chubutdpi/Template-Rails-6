@@ -350,7 +350,7 @@ file 'app/views/layouts/_navbar.html.erb', <<-CODE
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav me-auto mb-2 mb-md-0">
         <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="#">Home</a>
+          <a class="nav-link" aria-current="page" href="/">Inicio</a>
         </li>
         <% if current_user.admin? %>
         <li class="nav-item">
@@ -969,7 +969,7 @@ server '45.235.225.59', user: 'deploy', roles: %w{app db web}
 	run "yarn add datatables.net-bs5"
 	run "yarn add datatables.net-responsive-bs5"
 	run "yarn add select2"
-	run "yarn add bootstrap-datepicker"
+	run "yarn add bootstrap-datepicker" #DUDA!!!!!!
 	run "yarn add flatpickr"
 	run "yarn add @fullcalendar/core @fullcalendar/moment @fullcalendar/bootstrap @fullcalendar/daygrid @fullcalendar/timegrid @fullcalendar/list"
 
@@ -1076,7 +1076,9 @@ end
   generate("scaffold Province iso_id:string name:string national_id:integer  country:references complete_name:string iso_name:string lat:decimal{8,2} lon:decimal{8,2}")
   generate("scaffold Department complete_name:string name:string national_id:integer province:references category:string lat:decimal{8,2} lon:decimal{8,2}")
   generate("scaffold Locality name:string national_id:integer department:references category:string lat:decimal{8,2} lon:decimal{8,2}")
-  generate("scaffold events title:string start:datetime end:datetime url:string classNames:string backgroundColor:string borderColor:string textColor:string")
+  generate("scaffold DependenceType name:string complexity:integer")
+  generate("scaffold Dependence code:integer name:string alias:string dependence_type:references abbreviation:string dependence_childs:references locality:references")
+  generate("scaffold Events title:string start:datetime end:datetime url:string classNames:string backgroundColor:string borderColor:string textColor:string")
 
   # EDIT EVENT.
   inject_into_file 'app/views/events/index.html.erb', :after => "<!-- End Scaffold -->" do
